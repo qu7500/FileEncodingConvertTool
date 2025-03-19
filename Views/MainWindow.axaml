@@ -1,0 +1,141 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:FileEncodingConvertTool.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="450"
+        x:Class="FileEncodingConvertTool.Views.MainWindow"
+        x:DataType="viewModels:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="FileEncodingConvertTool"
+        MinWidth="900" MinHeight="300"
+        Width="900" Height="450"
+        WindowStartupLocation="CenterScreen">
+    <Window.Styles>
+        <!-- 全局设置 DataGrid 文本居中对齐 -->
+        <Style Selector="DataGridTextColumn TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </Window.Styles>
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <viewModels:MainWindowViewModel />
+    </Design.DataContext>
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Top"
+                   Height="40"
+                   HorizontalAlignment="Stretch">
+            <TextBlock Text="文件路径:"
+                       VerticalAlignment="Center"
+                       Margin="10,0,5,0"
+                       DockPanel.Dock="Left" />
+            <CheckBox Content="是否搜索子路径" Margin="10,0,10,0"
+                      DockPanel.Dock="Right"
+                      IsChecked="{Binding IsSelectedSubPath}" />
+            <Button  DockPanel.Dock="Right" Margin="10,0,10,0"
+                     Content="清理缓存路径" Command="{Binding ClearCommand}"></Button>
+            <Button Content="..."
+                    FontSize="20"
+                    Width="30"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,5,0,5"
+                    Padding="0,0,0,10"
+                    DockPanel.Dock="Right"
+                    Command="{Binding SelectPathCommand}" />
+            <ComboBox VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,0,10,0"
+                      MinWidth="300"
+                      ItemsSource="{Binding Paths}"
+                      SelectedItem="{Binding SelectedPath,Mode=TwoWay}">
+            </ComboBox>
+        </DockPanel>
+        <!-- 状态栏-->
+        <DockPanel DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal" MaxHeight="30">
+                <ProgressBar  Margin="10 2" Height="10" 
+                              Minimum="0" Maximum="100" 
+                              Value="{Binding ProgressValue}"
+                              ShowProgressText="False"
+                              IsVisible="{Binding ProgressVisible}"/>
+                <TextBlock Text="状态:" VerticalAlignment="Center"></TextBlock>
+                <TextBlock Text="{Binding StateInfo}" VerticalAlignment="Center"></TextBlock>
+                <Button Content="清空" Command="{Binding ClearCommand}" Margin="10,0,0,0" />
+            </StackPanel>
+        </DockPanel>
+        <!--左侧边栏-->
+        <DockPanel DockPanel.Dock="Left"
+                   MaxWidth="200">
+            <TextBlock Text="设置加载文件后缀名" TextWrapping="Wrap" DockPanel.Dock="Top" Margin="5"></TextBlock>
+            <TextBlock Text="请在英文状态下输入后缀名 每一个后缀名占一行，例如：“.txt“" DockPanel.Dock="Top" FontSize="12" TextWrapping="Wrap" Margin="5"></TextBlock>
+            <TextBox Text="{Binding ValidateExtension,Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     MinHeight="100"
+                     MaxHeight="260"
+                     Margin="2"
+                     DockPanel.Dock="Top" />
+            <TextBlock Text="选择编码筛选项" TextWrapping="Wrap" DockPanel.Dock="Top" Margin="5" ></TextBlock>
+            <ListBox SelectionMode="Multiple,Toggle" 
+                     x:Name="EncodingSelectedBox"
+                     SelectedItems="{Binding FitterEncodings,Mode=TwoWay}"
+                     ItemsSource="{Binding Encodings}"/>
+        </DockPanel>
+        <!--表格显示区域-->
+        <DockPanel  Margin="3">
+            <Border BorderBrush="Gray"
+                    BorderThickness = "2"
+                    DockPanel.Dock="Top"
+                    CornerRadius = "5"
+                    Padding="5">
+            <StackPanel DockPanel.Dock="Top" 
+                        Orientation="Horizontal">
+                <StackPanel.Styles>
+                    <Style Selector="Button,TextBlock,CheckBox,ComboBox">
+                        <Setter Property="Margin" Value="5,0,5,0" />
+                    </Style>
+                    <Style Selector="Button,CheckBox,ComboBox">
+                        <Setter Property= "IsEnabled" Value="{Binding !Cancellation}" />
+                    </Style>
+                </StackPanel.Styles>
+                <Button Content="加载文件"  Command="{Binding LoadSelectedPathCommand}"></Button>
+                <CheckBox Content="开启编码检测增强模式" IsChecked="{Binding IsEnhancedMode}" ></CheckBox>
+                <TextBlock Text="目标编码格式:" VerticalAlignment="Center"></TextBlock>
+                <ComboBox SelectedIndex="2"
+                    ItemsSource="{Binding Encodings}"
+                    SelectedItem="{Binding TargetEncoding}"/>
+                <CheckBox Content="全选/取消全选" IsChecked="{Binding IsSelectAll}" IsThreeState="True"></CheckBox>
+                <Button Content="开始转换" Command="{Binding DoConvertCommand}"></Button>
+                <Button Content="取消操作" IsEnabled="{Binding  Cancellation}"  IsVisible="{Binding Cancellation}" Command="{Binding CancelTokenCommand}"></Button>
+            </StackPanel>
+            </Border>
+            <DataGrid Margin="5" ItemsSource="{Binding FileEncodingDatas}"
+                      IsReadOnly="True"
+                      GridLinesVisibility="All"
+                      CanUserReorderColumns="True"
+                      CanUserResizeColumns="True"
+                      BorderThickness="1" BorderBrush="Gray">
+                <DataGrid.Columns >
+                    <DataGridTemplateColumn Header="编码格式" SortMemberPath="EncodingType" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="10,0,10,0"
+                                            HorizontalAlignment="Left">
+                                    <CheckBox IsChecked="{Binding IsChecked,Mode=TwoWay}" />
+                                    <TextBlock Text="{Binding EncodingType}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="文件名称" Binding="{Binding FileName}" />
+                    <DataGridTextColumn Header="文件扩展名" Binding="{Binding Extension}" />
+                    <DataGridTextColumn Header="文件路径" Binding="{Binding FilePath}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </DockPanel>
+</Window>
