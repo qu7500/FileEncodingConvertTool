@@ -3,18 +3,290 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:FileEncodingConvertTool.ViewModels"
+        xmlns:anim="https://github.com/avaloniaui"
+        xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="450"
         x:Class="FileEncodingConvertTool.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="FileEncodingConvertTool"
-        MinWidth="900" MinHeight="300"
-        Width="900" Height="450"
-        WindowStartupLocation="CenterScreen">
+        Title="文件编码转换工具"
+        MinWidth="1000" MinHeight="600"
+        Width="1000" Height="600"
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="AcrylicBlur"
+        ExtendClientAreaToDecorationsHint="False"
+        SystemDecorations="Full">
     <Window.Styles>
-        <!-- 全局设置 DataGrid 文本居中对齐 -->
-        <Style Selector="DataGridTextColumn TextBlock">
+        <!-- 全局主题定义 -->
+        <Style Selector="Window">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <!-- 亮色主题 -->
+        <Style Selector="Window.light">
+            <Setter Property="Background" Value="#F3F3F3"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+
+        <!-- 暗色主题 -->
+        <Style Selector="Window.dark">
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- 全局控件样式 - 继承窗口主题 -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="TextBox, ComboBox, ListBox">
+            <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <!-- 全局控件样式 -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- 工具栏按钮样式 -->
+        <Style Selector="StackPanel[Orientation=Horizontal] > Button">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="IsEnabled" Value="{Binding !Cancellation}"/>
+        </Style>
+        <Style Selector="StackPanel[Orientation=Horizontal] > TextBlock">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="StackPanel[Orientation=Horizontal] > CheckBox">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="IsEnabled" Value="{Binding !Cancellation}"/>
+        </Style>
+        <Style Selector="StackPanel[Orientation=Horizontal] > ComboBox">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="IsEnabled" Value="{Binding !Cancellation}"/>
+        </Style>
+        
+        <!-- 亮色主题按钮样式 -->
+        <Style Selector="Window.light Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0078D4"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        
+        <Style Selector="Window.light Button:pointerover">
+            <Setter Property="Background" Value="#E5F1FB"/>
+        </Style>
+        
+        <Style Selector="Window.light Button:pressed">
+            <Setter Property="Background" Value="#CCE4F7"/>
+        </Style>
+        
+        <Style Selector="Window.light Button:disabled">
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+        
+        <!-- 暗色主题按钮样式 -->
+        <Style Selector="Window.dark Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#4F4F4F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        
+        <Style Selector="Window.dark Button:pointerover">
+            <Setter Property="Background" Value="#2D2D2D"/>
+        </Style>
+        
+        <Style Selector="Window.dark Button:pressed">
+            <Setter Property="Background" Value="#3D3D3D"/>
+        </Style>
+        
+        <Style Selector="Window.dark Button:disabled">
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+
+        <!-- 亮色主题TextBox样式 -->
+        <Style Selector="Window.light TextBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        </Style>
+        <Style Selector="Window.light TextBox:pointerover">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+        </Style>
+        <Style Selector="Window.light TextBox:focus">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+        </Style>
+
+        <!-- 暗色主题TextBox样式 -->
+        <Style Selector="Window.dark TextBox">
+            <Setter Property="Background" Value="#252525"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#4F4F4F"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Window.dark TextBox:pointerover">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+        </Style>
+        <Style Selector="Window.dark TextBox:focus">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+        </Style>
+
+        <!-- 亮色主题ComboBox样式 -->
+        <Style Selector="Window.light ComboBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        </Style>
+        <Style Selector="Window.light ComboBox:pointerover">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+        </Style>
+        <Style Selector="Window.light ComboBox:focus">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+        </Style>
+        
+        <!-- 暗色主题ComboBox样式 -->
+        <Style Selector="Window.dark ComboBox">
+            <Setter Property="Background" Value="#252525"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#4F4F4F"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Window.dark ComboBox:pointerover">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+        </Style>
+        <Style Selector="Window.dark ComboBox:focus">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+        </Style>
+
+        <!-- 亮色主题DataGrid样式 -->
+        <Style Selector="Window.light DataGridTextColumn TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+
+        <!-- 暗色主题DataGrid样式 -->
+        <Style Selector="Window.dark DataGridTextColumn TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- 亮色主题DataGrid行样式 -->
+        <Style Selector="Window.light DataGridRow">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+
+        <!-- 暗色主题DataGrid行样式 -->
+        <Style Selector="Window.dark DataGridRow">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- 亮色主题DataGrid选中行样式 -->
+        <Style Selector="Window.light DataGridRow:selected">
+            <Setter Property="Background" Value="#E5F1FB"/>
+        </Style>
+
+        <!-- 暗色主题DataGrid选中行样式 -->
+        <Style Selector="Window.dark DataGridRow:selected">
+            <Setter Property="Background" Value="#3D3D3D"/>
+        </Style>
+
+        <!-- 亮色主题DataGrid悬停行样式 -->
+        <Style Selector="Window.light DataGridRow:pointerover">
+            <Setter Property="Background" Value="#F5F5F5"/>
+        </Style>
+
+        <!-- 暗色主题DataGrid悬停行样式 -->
+        <Style Selector="Window.dark DataGridRow:pointerover">
+            <Setter Property="Background" Value="#2D2D2D"/>
         </Style>
     </Window.Styles>
     <Design.DataContext>
@@ -22,19 +294,24 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
-    <DockPanel Margin="10">
+    <DockPanel Margin="8">
+        <!-- 顶部工具栏 -->
         <DockPanel DockPanel.Dock="Top"
-                   Height="40"
-                   HorizontalAlignment="Stretch">
+                   Height="48"
+                   HorizontalAlignment="Stretch"
+                   Margin="8,0"
+                   Background="Transparent">
             <TextBlock Text="文件路径:"
                        VerticalAlignment="Center"
                        Margin="10,0,5,0"
                        DockPanel.Dock="Left" />
             <CheckBox Content="是否搜索子路径" Margin="10,0,10,0"
                       DockPanel.Dock="Right"
-                      IsChecked="{Binding IsSelectedSubPath}" />
-            <Button  DockPanel.Dock="Right" Margin="10,0,10,0"
-                     Content="清理缓存路径" Command="{Binding ClearCommand}"></Button>
+                      IsChecked="{Binding IsSelectedSubPath}"/>
+            <Button DockPanel.Dock="Right" Margin="10,0,10,0"
+                    Content="切换主题" Command="{Binding ToggleThemeCommand}"/>
+            <Button DockPanel.Dock="Right" Margin="10,0,10,0"
+                    Content="清理缓存路径" Command="{Binding ClearCommand}"></Button>
             <Button Content="..."
                     FontSize="20"
                     Width="30"
@@ -51,19 +328,24 @@
                       Margin="0,0,10,0"
                       MinWidth="300"
                       ItemsSource="{Binding Paths}"
-                      SelectedItem="{Binding SelectedPath,Mode=TwoWay}">
-            </ComboBox>
+                      SelectedItem="{Binding SelectedPath,Mode=TwoWay}"/>
         </DockPanel>
         <!-- 状态栏-->
         <DockPanel DockPanel.Dock="Bottom">
             <StackPanel Orientation="Horizontal" MaxHeight="30">
-                <ProgressBar  Margin="10 2" Height="10" 
-                              Minimum="0" Maximum="100" 
-                              Value="{Binding ProgressValue}"
-                              ShowProgressText="False"
-                              IsVisible="{Binding ProgressVisible}"/>
-                <TextBlock Text="状态:" VerticalAlignment="Center"></TextBlock>
-                <TextBlock Text="{Binding StateInfo}" VerticalAlignment="Center"></TextBlock>
+                <ProgressBar Margin="10 2" Height="8" 
+                             Minimum="0" Maximum="100" 
+                             Value="{Binding ProgressValue}"
+                             ShowProgressText="False"
+                             IsVisible="{Binding ProgressVisible}"/>
+                <TextBlock Text="状态:" VerticalAlignment="Center"
+                           FontSize="13"
+                           Foreground="#333333"
+                           Margin="5,0,0,0"/>
+                <TextBlock Text="{Binding StateInfo}" VerticalAlignment="Center"
+                           FontSize="13"
+                           Foreground="#0078D4"
+                           Margin="5,0,0,0"/>
                 <Button Content="清空" Command="{Binding ClearCommand}" Margin="10,0,0,0" />
             </StackPanel>
         </DockPanel>
@@ -77,12 +359,30 @@
                      MinHeight="100"
                      MaxHeight="260"
                      Margin="2"
-                     DockPanel.Dock="Top" />
+                     DockPanel.Dock="Top"/>
             <TextBlock Text="选择编码筛选项" TextWrapping="Wrap" DockPanel.Dock="Top" Margin="5" ></TextBlock>
             <ListBox SelectionMode="Multiple,Toggle" 
                      x:Name="EncodingSelectedBox"
                      SelectedItems="{Binding FitterEncodings,Mode=TwoWay}"
-                     ItemsSource="{Binding Encodings}"/>
+                     ItemsSource="{Binding Encodings}"
+                     BorderThickness="1"
+                     BorderBrush="#E0E0E0"
+                     CornerRadius="4"
+                     Background="White"
+                     Padding="4">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="8,4"/>
+                        <Setter Property="Margin" Value="0,2"/>
+                    </Style>
+                    <Style Selector="ListBoxItem:pointerover">
+                        <Setter Property="Background" Value="#F5F5F5"/>
+                    </Style>
+                    <Style Selector="ListBoxItem:selected">
+                        <Setter Property="Background" Value="#E5F1FB"/>
+                    </Style>
+                </ListBox.Styles>
+            </ListBox>
         </DockPanel>
         <!--表格显示区域-->
         <DockPanel  Margin="3">
@@ -92,15 +392,9 @@
                     CornerRadius = "5"
                     Padding="5">
             <StackPanel DockPanel.Dock="Top" 
-                        Orientation="Horizontal">
-                <StackPanel.Styles>
-                    <Style Selector="Button,TextBlock,CheckBox,ComboBox">
-                        <Setter Property="Margin" Value="5,0,5,0" />
-                    </Style>
-                    <Style Selector="Button,CheckBox,ComboBox">
-                        <Setter Property= "IsEnabled" Value="{Binding !Cancellation}" />
-                    </Style>
-                </StackPanel.Styles>
+                        Orientation="Horizontal"
+                        Margin="5,0,5,0"
+                        Spacing="10">
                 <Button Content="加载文件"  Command="{Binding LoadSelectedPathCommand}"></Button>
                 <CheckBox Content="开启编码检测增强模式" IsChecked="{Binding IsEnhancedMode}" ></CheckBox>
                 <TextBlock Text="目标编码格式:" VerticalAlignment="Center"></TextBlock>
@@ -114,10 +408,57 @@
             </Border>
             <DataGrid Margin="5" ItemsSource="{Binding FileEncodingDatas}"
                       IsReadOnly="True"
-                      GridLinesVisibility="All"
+                      GridLinesVisibility="Horizontal"
                       CanUserReorderColumns="True"
                       CanUserResizeColumns="True"
-                      BorderThickness="1" BorderBrush="Gray">
+                      BorderThickness="0"
+                      CornerRadius="4"
+                      Background="White">
+                <DataGrid.Styles>
+                    <Style Selector="DataGrid">
+                        <Setter Property="FontSize" Value="13"/>
+                    </Style>
+        <!-- 暗色主题DataGrid样式 -->
+        <Style Selector="Window.dark DataGridTextColumn TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Window.light DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F5F5F5"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                        <Setter Property="Height" Value="32"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                    </Style>
+        <Style Selector="Window.dark DataGridColumnHeader">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#4F4F4F"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Window.light DataGridRow">
+                        <Setter Property="MinHeight" Value="36"/>
+                    </Style>
+        <Style Selector="Window.dark DataGridRow">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Background" Value="#1E1E1E"/>
+        </Style>
+
+        <Style Selector="Window.light DataGridRow:selected">
+                        <Setter Property="Background" Value="#E5F1FB"/>
+                    </Style>
+        <Style Selector="Window.dark DataGridRow:selected">
+            <Setter Property="Background" Value="#3D3D3D"/>
+        </Style>
+
+        <Style Selector="Window.light DataGridRow:pointerover">
+                        <Setter Property="Background" Value="#F5F5F5"/>
+                    </Style>
+                </DataGrid.Styles>
                 <DataGrid.Columns >
                     <DataGridTemplateColumn Header="编码格式" SortMemberPath="EncodingType" >
                         <DataGridTemplateColumn.CellTemplate>

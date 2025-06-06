@@ -18,6 +18,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.Media;
 using DynamicData;
 using FileEncodingChecker.Services;
 using FileEncodingChecker.Utils;
@@ -137,11 +138,41 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<string> Encodings { get; set; } = [];
     public ObservableCollection<string>? FitterEncodings { get; set; } = [];
 
+    private Window? _window;
+    
+    public void SetWindow(Window window)
+    {
+        _window = window;
+    }
+    
+    private IBrush _currentBackground = Brush.Parse("#FFFFFF");
+    public IBrush CurrentBackground
+    {
+        get => _currentBackground;
+        set => this.RaiseAndSetIfChanged(ref _currentBackground, value);
+    }
+
+    private string _currentTheme = "light";
+    public string CurrentTheme
+    {
+        get => _currentTheme;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _currentTheme, value);
+            CurrentBackground = value == "light" ? Brush.Parse("#FFFFFF") : Brush.Parse("#1E1E1E");
+        }
+    }
+
     public MainWindowViewModel()
     {
         LoadFilePathlist();
         InitEncoding();
         InitFileEncodingDatas();
+        
+        ToggleThemeCommand = ReactiveCommand.Create(() => 
+        {
+            CurrentTheme = CurrentTheme == "light" ? "dark" : "light";
+        });
         SelectPathCommand = ReactiveCommand.CreateFromTask(SelectPath);
         LoadSelectedPathCommand = ReactiveCommand.Create(DoSerchFile);
         DoConvertCommand = ReactiveCommand.CreateFromTask(DoConvert);
@@ -370,13 +401,13 @@ public partial class MainWindowViewModel : ViewModelBase
     #region ReactiveCommand
 
     public ICommand SelectPathCommand { get; }
+    public ICommand ToggleThemeCommand { get; }
     public ICommand LoadSelectedPathCommand { get; }
     public ICommand DoConvertCommand { get; }
     public ICommand CancelTokenCommand { get; }
     public ICommand OpenWindowCommand { get; }
     public ICommand ClearCommand { get; }
     public ICommand DoFitterEncodingCommand { get; }
-
 
     private void DoFitterEncoding()
     {

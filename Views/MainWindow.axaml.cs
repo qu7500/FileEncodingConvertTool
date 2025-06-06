@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using FileEncodingConvertTool.ViewModels;
 using MainWindowViewModel = FileEncodingConvertTool.ViewModels.MainWindowViewModel;
+using ReactiveUI;
 
 namespace FileEncodingConvertTool.Views;
 
@@ -11,8 +12,20 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new MainWindowViewModel();
+        var vm = new MainWindowViewModel();
+        DataContext = vm;
+        vm.SetWindow(this);
         
+        // 初始主题设置
+        Classes.Set("light", true);
+        
+        // 监听主题变化
+        vm.WhenAnyValue(x => x.CurrentTheme)
+            .Subscribe(theme => 
+            {
+                Classes.Set("light", theme == "light");
+                Classes.Set("dark", theme == "dark");
+            });
     }
     protected override void OnClosed(EventArgs e)
     {

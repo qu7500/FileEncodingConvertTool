@@ -1,0 +1,48 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FileEncodingConvertTool.Views.HelpView">
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0078D4"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#E5F1FB"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Margin="20" Spacing="15">
+        <TextBlock Text="文件编码转换工具 - 帮助" FontSize="20" FontWeight="Bold"/>
+        
+        <StackPanel Spacing="10">
+            <TextBlock Text="使用说明:" FontWeight="SemiBold"/>
+            <TextBlock Text="1. 选择要转换的文件或文件夹路径"/>
+            <TextBlock Text="2. 设置需要筛选的文件扩展名"/>
+            <TextBlock Text="3. 选择目标编码格式"/>
+            <TextBlock Text="4. 点击'开始转换'按钮执行转换"/>
+        </StackPanel>
+        
+        <StackPanel Spacing="10">
+            <TextBlock Text="常见问题:" FontWeight="SemiBold"/>
+            <TextBlock Text="Q: 为什么某些文件转换失败？"/>
+            <TextBlock Text="A: 可能是文件被占用或无权限访问，请检查文件状态"/>
+            <TextBlock Text="Q: 如何批量转换子文件夹中的文件？"/>
+            <TextBlock Text="A: 勾选'是否搜索子路径'选项"/>
+        </StackPanel>
+        
+        <Button Content="关闭" HorizontalAlignment="Right" Width="100" Margin="0,20,0,0"/>
+    </StackPanel>
+</UserControl>

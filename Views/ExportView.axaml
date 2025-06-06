@@ -1,0 +1,46 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FileEncodingConvertTool.Views.ExportView">
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0078D4"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#E5F1FB"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock Text="导出选项" FontSize="18" FontWeight="Bold"/>
+        
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="导出格式:" VerticalAlignment="Center"/>
+            <ComboBox Width="200" CornerRadius="4" BorderThickness="1" BorderBrush="#E0E0E0">
+                <ComboBoxItem>CSV</ComboBoxItem>
+                <ComboBoxItem>JSON</ComboBoxItem>
+                <ComboBoxItem>Excel</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="导出路径:" VerticalAlignment="Center"/>
+            <TextBox Width="300" CornerRadius="4" BorderThickness="1" BorderBrush="#E0E0E0"/>
+            <Button Content="浏览..." Width="80"/>
+        </StackPanel>
+        
+        <Button Content="导出" HorizontalAlignment="Right" Width="100" Margin="0,20,0,0"/>
+    </StackPanel>
+</UserControl>
